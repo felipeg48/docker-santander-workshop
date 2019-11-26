@@ -1,0 +1,46 @@
+version: '3.4'
+services:
+  rabbit1:
+    container_name: rabbit1
+    image: rabbitmq:3.7.21-management-alpine
+    hostname: rabbit1
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rabbitmq-network
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_ERLANG_COOKIE=SANTANDERCOOKIE
+  
+  rabbit2:
+    container_name: rabbit2
+    image: rabbitmq:3.7.21-management-alpine
+    hostname: rabbit2
+    depends_on:
+      - rabbit1
+    networks:
+      - rabbitmq-network
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_ERLANG_COOKIE=SANTANDERCOOKIE  
+
+  rabbit3:
+    container_name: rabbit3
+    image: rabbitmq:3.7.21-management-alpine
+    hostname: rabbit3
+    networks:
+      - rabbitmq-network
+    depends_on:
+      - rabbit1
+    environment: 
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_ERLANG_COOKIE=SANTANDERCOOKIE
+    volumes:
+      - ${PWD}/config/:/etc/rabbitmq/
+
+networks:
+  rabbitmq-network:
